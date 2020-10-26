@@ -15,7 +15,7 @@
 			<?php foreach($kalendarz as $i): ?>
 				<tr>
 				<?php foreach($i as $j): ?>
-				<td> <?php echo $j["wartosc"] ?></td>
+				<td style="color: <?php echo !empty($j["color"]) ? $j["color"] : "blue" ?>"> <?php echo $j["wartosc"] ?></td>
 				<?php endforeach; ?>
 				</tr>
 			<?php endforeach; ?>
