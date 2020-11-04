@@ -1,5 +1,5 @@
 <?php
-//TUTAJ KOPIUJE KODy z app1 żeby miec je z komentarzami i przykładami
+//TUTAJ KOPIUJE KODY z app1 żeby miec je z komentarzami i przykładami
         // zmienne kalendarza
         $t = date('t'); // liczba dni w miesiącu
         $j = date('j'); // dzień miesiąca

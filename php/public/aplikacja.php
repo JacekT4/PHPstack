@@ -35,7 +35,9 @@
 				case "/obecnywynik":
 				return $this->controler->obecnywynik();		
 				case "/emaile":
-				return $this->controler->emaile($this->post);							
+				return $this->controler->emaile($this->post);			
+				case "/ksiazki";
+				return $this->controler->ksiazki($this->post);
 			}
 		}
 	}
