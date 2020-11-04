@@ -14,17 +14,9 @@
 	<div id="panel_gorny" class="mx-auto" style="width: 300px;">
 	
 		<form class="form-inline" method="post">
-		  <input type="text" name="imie" class="form-control mb-2 mr-sm-2" id="imie" placeholder="imie">
-		  <input type="text" name="nazwisko" class="form-control mb-2 mr-sm-2" id="nazwisko" placeholder="nazwisko">
-
-		  <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
-		  <div class="input-group mb-2 mr-sm-2">
-			<div class="input-group-prepend">
-			  <div class="input-group-text">@</div>
-			</div>
-			<input type="text" name="email" class="form-control" id="email" placeholder="email">
-		  </div>
-		  <button type="submit" class="btn btn-primary mb-2" id="dodaj">Submit</button>
+			<input type="text" name="autor" class="form-control mb-2 mr-sm-2" id="autor" placeholder="Autor">
+			<input type="text" name="tytul" class="form-control mb-2 mr-sm-2" id="tytul" placeholder="Tytuł">
+			<button type="submit" class="btn btn-primary mb-2" id="dodaj">Submit</button>
 		</form>
 		
 	</div>
@@ -32,8 +24,13 @@
 	<div id="content" class="mx-auto" style="width: 300px;">
 		Lista
 		<ol id="lista" class="list-group">
-			<?php foreach($lista as $i): ?>
-				<li><?php  echo "Imię: " . $i["imie"] . " Nazwisko: " . $i["nazwisko"] . " Email: " . $i["email"]; ?></li>    <!-- Kropka łączy stringi w php -->
+			<?php foreach($lista2 as $i): ?>
+				<li><?php  echo "Id: " . $i["id"] . " Autor: " . $i["autor"] . " Tytuł: " . $i["tytul"]; ?> 
+					<form method="post">
+						<input type="text" name="usuwacz" value="<?php echo $i["id"] ?>">      
+						<button type="submit" class="btn btn-primary mb-2" id="usun">Usuń</button>
+					</form>
+				</li>    <!-- Kropka łączy stringi w php -->
 			<?php endforeach; ?>
 		</ol>
 	</div>
