@@ -61,11 +61,42 @@
 				}
 			}	 
 			$lista2 = $this->model->odczytZBazy3();
-			
-
 				
 			include("widok3.php");
 		}
 		
+		
+		
+		public function baza($parametry, $formularz){    //bo do get i do post
+			$wynik_zapisu = true;
+			$wynik_usuwania = true;
+/*			$formularz = [
+			    "Imie"=> "Pawel",
+				"Nazwisko"=>"Nowak",
+				"Wiek"=>"28",
+				"Kod_Pocztowy"=>"20-456",
+				"Miasto"=>"Lublin"];							*/
+/*			var_dump($parametry);
+			exit;
+*/
+			if(!empty($formularz)){
+				if(!empty($formularz["Imie"]) && !empty($formularz["Nazwisko"]) && !empty($formularz["Wiek"]) && !empty($formularz["Kod_Pocztowy"]) && !empty($formularz["Miasto"])){
+					$wynik_zapisu = $this->model->zapiszBazaMysql($formularz);
+				}elseif(!empty($formularz["usuwacz"])){ 
+					$wynik_usuwania = $this->model->usunBazaMysql($formularz);
+				}
+			}
+			$wyniki = $this->model->odczytBazaMysql();
+/*			$wyniki2 = $this->model->odczytBazaDanych($parametry);    //DODAŁEM*/
+			
+/*			echo "<pre>";
+			var_dump ($wyniki);
+			exit;									*/
+			
+			include("widok4.php");		
+		}
+	
 	}
 	//konstruktor używamy non stop a destruktor prawie wcale
+	
+	

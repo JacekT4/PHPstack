@@ -23,8 +23,12 @@ services:
             context: .
             dockerfile: mysql/Dockerfile
         restart: on-failure
-        volumes:
-            - ./mysql/docker-mysql-database:/var/lib/mysql
+        #volumes:
+         #   - ./mysql/docker-mysql-dir:/var/lib/mysql
+        # 2 linijki powy żej były tylko po to zeby po utworzeniu  utrwalic foder na dysku, zeby  nie musiał tworzyc go przy każdym uruchamianiu kontenera ALE coś na moim dokerze pod Windowsem 7 nie chciało to działać i kontener mysql sie cały czas restartował
+        #standardowo tworzy połączenie na porcie 3306 !!!
         environment:
             - MYSQL_ROOT_PASSWORD=mypass
         command: --default-authentication-plugin=mysql_native_password
+        #&& sh -c "mysql -uroot -pmypass < /baza/start.sql"
+        #linijka powyżej - próbowalismy naprawić utrwalanie folderu na dysku ALE dalej nie działa

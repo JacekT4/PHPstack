@@ -1,6 +1,10 @@
 <?php //do logiki
 	class Model{
-	
+		/*  ZAINSPIROWAĆ SIĘ MODELEM Z CONTROLERA    -  dependency injection - WZORZEC PROJEKTOWY polegający na przekazywaniu zależnosci, zależności są podawnane a nie generowane czy tworzone przez klase
+		public function __construct($bdh){            //tworzymy konstruktor tylko jeden dla klasy w php
+			$this->bdh = $bdh;                                       //zmienna kluczowa this odnosi sie do obiektu, dostepna tylko wetdy kiedy stworzysz obiekt
+		}
+		*/
 		public function dajTabliceKalendarza(){
 			// zmienne kalendarza
 			$t = date('t'); // liczba dni w miesiącu
@@ -101,6 +105,8 @@
 		}		
 */		
 		
+		
+		
 		private function zapiszDoBazy($liczba){    //ZAD dodac parametr ($co) i drugi ($co, $wartosc) i liczbe nadpisuje a liste dodaje mozna dodac trzeci parametr ($akcja) czyli co zrobic, zamien, dodaj, usun
 			file_put_contents("wynik.json", json_encode(["wartosc" => $liczba]));      //zapisuje do pliku zwrocony przez json_encode string
 		}
@@ -121,6 +127,8 @@
 			return true;
 		}		
 	
+	
+	
 		public function odczytZBazy2(){
 				if(file_exists("baza.json")){ 
 					$e = file_get_contents("baza.json");    //weż z bazy
@@ -132,6 +140,7 @@
 					return [ ];      //zwracamy pusta tablica
 				}
 		}
+
 
 
 		public function zapiszDoBazy3($formularz){    //ZAD dodac parametr ($co) i drugi ($co, $wartosc) i liczbe nadpisuje a liste dodaje mozna dodac trzeci parametr ($akcja) czyli co zrobic, zamien, dodaj, usun
@@ -148,6 +157,8 @@
 			return true;
 		}		
 	
+	
+	
 		public function odczytZBazy3(){
 				if(file_exists("baza2.json")){ 
 					$e = file_get_contents("baza2.json");    //weż z bazy
@@ -159,6 +170,8 @@
 					return [ ];      //zwracamy pusta tablica
 				}
 		}
+		
+		
 		
 		public function usunZBazy($formularz){
 			if(file_exists("baza2.json")){ 
@@ -178,6 +191,8 @@
 			}
 		}
 		
+		
+		
 		public function usunZBazy2($formularz){
 			if(file_exists("baza2.json")){ 
 					$e = file_get_contents("baza2.json");    //weż z bazy
@@ -196,5 +211,108 @@
 			}
 		}
 		
+		
+		
+		public function odczytBazaMysql(){
+			try{
+				//	$dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);                                          //wzór z php.net
+				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');       //ma byc bez spacji
+//				var_dump (get_class_methods($dbh));    //użyteczna metoda 
+//				exit;
+				$result = [];
+//UŻYĆ preper statmen i dodać parametry() jako argument funkcji i na podstawie parametru użyj orderby				
+				foreach($dbh->query('select * from tabela_pierwsza', \PDO::FETCH_ASSOC) as $row) {     // ukosnik \ musi byc przed klasą gdybysmy byli w name space
+					$result[] = $row;
+				}
+			} catch (\Throwable $e){     //    \Throwable -  obiekt który służy do łapania wszystkiego co nie spełnia bloku try, czyli wszystko co się zesra , \łapie nawet jak by było name space
+				throw $e;
+				throw new \Exception('Nie udało się połączyć z bazą!');      //wyrzuć nowy exception - to co w nawiasie - ŻEBY nie pokazać użytkownika i hasła komuś nie powołanemu
+			}
+			return $result;
+		}
+		
+		
+		
+		public function zapiszBazaMysql($formularz){
+/*			var_dump("INSERT INTO tabela_pierwsza (Imie, Nazwisko, Wiek, Kod_Pocztowy, Miasto) VALUES ('" . 
+							$formularz["Imie"] . "','" . $formularz["Nazwisko"] . "'," . $formularz["Wiek"] . ",'" . $formularz["Kod_Pocztowy"] . "','" . $formularz["Miasto"] . "')");
+			exit;*/                      //pomocnicze
+			try{
+				//	$dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);
+				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');       //ma byc bez spacji
+				$dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);       //ta linijka JESZCE DOJDZIEMY DO CZEGO JEST
+				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     //dzieki temu nie przymyka oczu na błędy tylko zawsze krzyczy że coś się  dzieje (rzuca EXEPTION)
+//				var_dump (get_class_methods($dbh));    //użyteczna metoda 
+//				exit;
+				$stmt = $dbh->prepare("INSERT INTO tabela_pierwsza (Imie, Nazwisko, Wiek, Kod_Pocztowy, Miasto) VALUES ( :Imie, :Nazwisko, :Wiek, :Kod_Pocztowy, :Miasto)" ); 
+				$stmt->bindParam(':Imie', $formularz["Imie"]);
+				$stmt->bindParam(':Nazwisko', $formularz["Nazwisko"]);
+				$stmt->bindParam(':Wiek', $formularz["Wiek"]);
+				$stmt->bindParam(':Kod_Pocztowy', $formularz["Kod_Pocztowy"]);
+				$stmt->bindParam(':Miasto', $formularz["Miasto"]);
+				$stmt->execute();   //poprostu wykona
+		
+//tą linijkę niżej zakomentowalismy ponieważ zmieniliśmy sposób zapisu tych danych żeby bronić się przed atakami za pomocą prepare jak powyżej
+//					$formularz["Imie"] . "','" . $formularz["Nazwisko"] . "'," . $formularz["Wiek"] . ",'" . $formularz["Kod_Pocztowy"] . "','" . $formularz["Miasto"] . "')");
+							
+							//tutaj są ' ' w których jest złapane wieksze wyrażenie a pmiedzy jeszcze " ", a . łączą stringi w php, musimy tak zapisać żeby działało wyrażenie SQL
+							//exec - powoduje że wykona to co mu powiesz
+			} catch (\Throwable $e){     //    \Throwable -  obiekt który służy do łapania wszystkiego co nie spełnia bloku try, czyli wszystko co się zesra , \łapie nawet jak by było name space tak jak wykorzystuje się w C++, ale my w naszym małym projekcie nie stosujemy tego na ten moment choć będziemy
+/*				throw $e;
+				throw new \Exception('Nie udało się połączyć z bazą!');      //wyrzuć nowy exception - to co w nawiasie - ŻEBY nie pokazać użytkownika i hasła komuś nie powołanemu		*/
+				return $e->getMessage();
+			}
+			return true;
+		}		
+		
+		
+		public function usunBazaMysql($formularz){
+			try{
+				//	$dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);
+				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');       //ma byc bez spacji
+				$dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);       //ta linijka JESZCE DOJDZIEMY DO CZEGO JEST
+				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     //dzieki temu nie przymyka okczu na błędy tylko zawsze krzyczy że coś się  dzieje (rzuca EXEPTION)
+//				var_dump (get_class_methods($dbh));    //użyteczna metoda 
+//				exit;
+				$dbh->exec("DELETE FROM tabela_pierwsza WHERE ID=" . $formularz["usuwacz"] );
+							//tutaj są ' ' w których jest złapane wieksze wyrażenie a pmiedzy jeszcze " ", a . łączą stringi w php, musimy tak zapisać żeby działało wyrażenie SQL
+							//exec - powoduje że wykona to co mu powiesz
+			} catch (\Throwable $e){     //    \Throwable -  obiekt który służy do łapania wszystkiego co nie spełnia bloku try, czyli wszystko co się zesra , \łapie nawet jak by było name space tak jak wykorzystuje się w C++, ale my w naszym małym projekcie nie stosujemy tego na ten moment choć będziemy
+/*				throw $e;
+				throw new \Exception('Nie udało się połączyć z bazą!');      //wyrzuć nowy exception - to co w nawiasie - ŻEBY nie pokazać użytkownika i hasła komuś nie powołanemu		*/
+				//zmieniliśmy sposób wyświetlania i dlatego juz bez tego throw, poprostu wyżucamy za pomocą funkci getMessage() jakieś błędy
+				return $e->getMessage();
+			}
+			return true;			
+		}
+		
+/*		
+		public function odczytBazaDanych($parametry){
+			try{
+				//	$dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);
+				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');
+				$dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false); 
+				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);   
+ //CZY TE 3 linijki są zawsze POTRZEBNE?
+ 				$result = [];
+				
+				foreach($dbh->query('select * from tabela_pierwsza order by Imie;') as $row) {     // ukosnik \ musi byc przed klasą gdybysmy byli w name space
+					$result[] = $row;
+				}					
+/*				
+				if(isset($parametry["sortuj=Imie"])){
+					$dbh->exec("SELECT * FROM tabela_pierwsza ORDER BY Imie;");
+				} elseif(isset($parametry["sortuj=Miasto"])){ 
+					$dbh->exec("SELECT * FROM tabela_pierwsza ORDER BY Miasto;");
+				}  //NIE MUSZĘ kończyć if-a?
+*/	
+/*			
+			} catch (\Throwable $e){  
+				return $e->getMessage();
+			}
+			return true;			
+		}
+*/		
 	}
+	
 	
