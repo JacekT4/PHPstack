@@ -86,9 +86,8 @@
 					$wynik_usuwania = $this->model->usunBazaMysql($formularz);
 				}
 			}
-			$wyniki = $this->model->odczytBazaMysql();
-/*			$wyniki2 = $this->model->odczytBazaDanych($parametry);    //DODAŁEM*/
-			
+			$wyniki = $this->model->odczytBazaMysql($parametry);
+
 /*			echo "<pre>";
 			var_dump ($wyniki);
 			exit;									*/

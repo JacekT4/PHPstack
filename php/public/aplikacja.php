@@ -16,12 +16,21 @@
 				$sciezka = substr( $sciezka , 0 ,  strpos($sciezka, "?") );     //strpos funkcja php która wskazuje ci coś w danym stringu
 			}    //substr ucina od 0 do "?"
 			
+			try{
+				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');   //DODAŁEM
+				$dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false); 
+				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);	
+			} catch(\Throwable $e){
+			//	throw new \Exception("Nie udało się połączyć z bazą danych");
+				echo "Nie udało się połączyć z bazą danych";
+				exit;
+			}
+			
 			$this->sciezka = $sciezka;                                       //zmienna kluczowa this odnosi sie do obiektu, dostepna tylko wtedy kiedy stworzysz obiekt
 			$this->get = $get;                                                 //tworzymy parametry obiektu
 			$this->post = $post;
-			
 			//dodać tu TEN Z ZADANIA DOMOWEGO bdh lub inną nazwa ALE CHODZI O TO ŻEBY BYŁO NAD MODELEM
-			$this->model = new Model();
+			$this->model = new Model($dbh);     //model dostaje dbh jako parametr bo tylko tam nam będzie potrzebny
 			$this->controler = new Controler($this->model);
 		}
 		
