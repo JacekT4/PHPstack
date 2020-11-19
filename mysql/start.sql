@@ -1,4 +1,5 @@
 CREATE DATABASE pierwsza_baza;
+USE pierwsza_baza;
 CREATE TABLE tabela_pierwsza (
 ID int AUTO_INCREMENT PRIMARY KEY,
 Imie varchar(255),

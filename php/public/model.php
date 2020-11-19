@@ -158,27 +158,28 @@
 			}
 			return true;
 */
-//WERSJA Z ZAPISEM DO BAZY MYSQL
+//WERSJA Z ZAPISEM DO BAZY MYSQL - tylku tu zmienilismy id na autoincrement i liczone od jeden a nie za pomocą funkcji time()
 			try{
-				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');   
+/*				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');   
 				$dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false); 
-				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);	*/
 //				var_dump (get_class_methods($dbh)); 				exit;
-				$stmt = $dbh->prepare("INSERT INTO tabela_druga (Id, Autor, Tytul) VALUES ( :Id, :Autor, :Tytul)" ); 
-				$stmt->bindParam(':Id', time());     //ZMIENIC NA AUTO INCREMENTACJE
+				$stmt = $this->dbh->prepare("INSERT INTO tabela_druga (Autor, Tytul) VALUES ( :Autor, :Tytul)" ); 
+//				$stmt->bindParam(':Id', time());     //ZMIENIC NA AUTO INCREMENTACJE - zmienilem
 				$stmt->bindParam(':Autor', $formularz["Autor"]);
 				$stmt->bindParam(':Tytul', $formularz["Tytul"]);
-				$stmt->execute(); 
+				$stmt->execute(); 		
+				
 			} catch (\Throwable $e){ 
-				throw $e;
-				return $e->getMessage();
+				return "Nie udało się zapisać do bazy";
 			}
 			return true;
 		}		
 	
 	
 	
-		public function odczytZBazy3(){
+		public function odczytZBazy3($parametry){
+//		public function odczytZBazy3(){
 /* WERSJA Z ZAPISYWANIEM DO BAZY JSON NA DYSKU
 				if(file_exists("baza2.json")){ 
 					$e = file_get_contents("baza2.json");    //weż z bazy
@@ -192,16 +193,19 @@
 */
 //WERSJA Z ZAPISEM DO BAZY MYSQL
 			try{
-				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass'); 
 //				var_dump (get_class_methods($dbh));    //exit;					//użyteczna metoda
 				$result = [];
 				
-				foreach($dbh->query('select * from tabela_druga', \PDO::FETCH_ASSOC) as $row) {
+				$stmt = $this->dbh->prepare("SELECT * FROM tabela_druga");	
+				
+				if ($stmt->execute()) {
+				  while ($row = $stmt->fetch()) {
 					$result[] = $row;
+				  }
 				}
 			} catch (\Throwable $e){ 
-				throw $e;
-				throw new \Exception('Nie udało się połączyć z bazą!'); 
+				
+				return [];
 			}
 			return $result;
 		}
@@ -248,14 +252,15 @@
 */
 //WERSJA Z USUWANIEM Z BAZY MYSQL
 			try{
-				$dbh = new PDO('mysql:host=mysql;port=3306;dbname=pierwsza_baza', 'root', 'mypass');
-				$dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-				$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-//				var_dump (get_class_methods($dbh));			//exit;				//użyteczna metoda 
+//			var_dump (get_class_methods($dbh));			//exit;				//użyteczna metoda 
 
-				$dbh->exec("DELETE FROM tabela_druga WHERE ID=" . $formularz["usuwacz"] );
+				$stmt = $this->dbh->prepare("DELETE FROM tabela_druga WHERE ID= :Id" ); 
+				$stmt->bindParam(':Id', $formularz["usuwacz"]);
+				$stmt->execute(); 
+				
 			} catch (\Throwable $e){ 
-				return $e->getMessage();
+//				return $e->getMessage();
+				return "Nie udało się usunąc";
 			}
 			return true;			
 		}
@@ -265,12 +270,13 @@
 		
 		public function odczytBazaMysql($parametry){
 			try{
-				$result = [];
+				$result = [];      //przypisuję poprostu pustą tablicę
 //UŻYĆ preper statmen i dodać parametry() jako argument funkcji i na podstawie parametru użyj orderby				
 /*				foreach($this->dbh->query('select * from tabela_pierwsza', \PDO::FETCH_ASSOC) as $row) {     // ukosnik \ musi byc przed klasą gdybysmy byli w name spac
 					$result[] = $row;
 				}
 */
+// sortowanie
 				if(isset($parametry["sortuj"]) && $parametry["sortuj"] == "Imie"){
 					$stmt = $this->dbh->prepare("SELECT * FROM tabela_pierwsza ORDER BY Imie" ); 
 				} elseif(isset($parametry["sortuj"]) && $parametry["sortuj"] == "Miasto"){ 

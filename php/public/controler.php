@@ -53,14 +53,18 @@
 		public function ksiazki($formularz){
 		
 			if(!empty($formularz)){
-				if(!empty($formularz["autor"]) && !empty($formularz["tytul"])){
+				if(!empty($formularz["Autor"]) && !empty($formularz["Tytul"])){
 					$efektZapisania2 = $this->model->zapiszDoBazy3($formularz);
 				}elseif(!empty($formularz["usuwacz"])){      //elseif ŁĄCZNIE w php
 //					$usuwacz = $this->model->usunZBazy($formularz);
 					$usuwacz = $this->model->usunZBazy2($formularz);
 				}
+				//do treningu z Ajaxem
+				echo '{"status":"ok"}';
+				exit;
+
 			}	 
-			$lista2 = $this->model->odczytZBazy3();
+			$lista2 = $this->model->odczytZBazy3($parametry);
 				
 			include("widok3.php");
 		}
