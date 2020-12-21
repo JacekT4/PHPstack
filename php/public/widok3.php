@@ -20,7 +20,7 @@
 		-->	
 			<input type="text" name="Autor" class="form-control mb-2 mr-sm-2" id="autor" placeholder="Autor">
 			<input type="text" name="Tytul" class="form-control mb-2 mr-sm-2" id="tytul" placeholder="Tytuł">
-			<button type="submit" class="btn btn-primary mb-2" id="dodaj">Submit</button>
+			<button type="submit" class="btn btn-primary mb-2" id="dodaj">Przygotuj do zapisu</button>
 		</form>
 		
 	</div>
@@ -30,13 +30,20 @@
 		<ol id="lista" class="list-group">
 			<?php foreach($lista2 as $i): ?>
 				<li><?php  echo "Id: " . htmlspecialchars($i["Id"]) . " Autor: " . htmlspecialchars($i["Autor"]) . " Tytuł: " . htmlspecialchars($i["Tytul"]); ?> 
-					<form method="post">
+					<form method="post" class="usuwacze">
 <!--						<input type="text" name="usuwacz" value="<?php //echo $i["Id"] ?>">      To było do wersji z bazą json -->
 						<input type="hidden" name="usuwacz" value="<?php echo $i["Id"] ?>">      
 						<button type="submit" class="btn btn-primary mb-2" id="usun">Usuń</button>
 					</form>
 				</li>    <!-- Kropka łączy stringi w php -->
 			<?php endforeach; ?>
+		</ol>
+		
+		<br><br>
+
+		Lista gotowych do zapisu na serwerze.
+		<ol id="lista3" class="list-group">
+
 		</ol>
 	</div>
 	
@@ -54,21 +61,14 @@
 		console.log(test1);
 		console.log(button1);
 	*/	
-		var test2 = $("#abc");
+
 //		var button2 = test2.find("button");
 /*		var button2 = $("#abc button");     //selektor , łapie w abc wszystkie buttony
 		button2.click(function(){
 			alert("dupa");
 		});
 */
-//chodzi nam o zasabmitować za pomoca samego JS
-		test2.submit(function(e){    //w momęcie kiedy formularz jest submitowany, e - event - obiekt ewentu który zostaje tworzony przez przegladarke jak coś sie wnniej dzieje i podawany do funkcji
-			e.preventDefault();    //dzieki temu się nie submituje
-			var costam = test2.find("input");
-			var wartosci = {};
-			costam.each(function(){
-				wartosci[this.name] = $(this).val();   //do tablicy wartosci przypiszze wartos
-			});
+		var call_ajax = function call_ajax(wartosci){
 			
 			$.ajax({
 				url: "http://www.tester1.com/ksiazki", //gdzie się łączymy
@@ -79,19 +79,73 @@
 				data: wartosci,
 				
 				success : function(response) { 
-					console.log("Udało się");
-					console.log(response);    //za pomoca tego response wyswietalny jest cała odpowiedz serwerwa w inspektorze
+/*					console.log("Udało się");
+					console.log(response.status);    //za pomoca tego response wyswietalny jest cała odpowiedz serwerwa w inspektorze   */
+					if(response.status == "ok") {
+						location.reload();
+					} else {
+						alert("Nie udalo sie");	
+					}
 				}, //gdy wszystko ok
 				error : function() {
 					console.log("Nie udało się");
 				}, //gdy błąd połączenia
 			});
+		}
+		
+		var js_lista = function js_lista(e){
+			e.preventDefault();
+
+			var lista = $("#lista3");
+
+			if(wszystkieWartosci.length == 0){
+				lista.append('<button class="btn btn-primary mb-2" id="wyslij">Wyslij na serwer</button>');
+				$("#wyslij").click(function(){
+					call_ajax({wszystkie: wszystkieWartosci});   //call_ajax potrzebuje dosta dane w postaci obiektu a nie w zwklej tablicy, dlatego dajemy tablice tablic tablic
+				});   
+			}
+
+			var costam = $(this).find("input");   //this w js odnosi sie do tego co zainicjowalo funkcje
+			var wartosci = {};
+			var doWyswietlenia = "";
+			costam.each(function(){       //za pomoca tehj funkcji wyciagamy SUCHE wartosci z tych inputow
+				wartosci[this.name] = $(this).val();   //do tablicy wartosci przypisze wartosc
+				doWyswietlenia = doWyswietlenia + " " + this.name + ":" + " " + $(this).val();
+			});
 			
-			
-//			console.log(e);
-			console.log(wartosci);
-//			alert("dupa2");
-		});      
+			wszystkieWartosci.push(wartosci);
+
+			console.log(wartosci, wszystkieWartosci);
+
+			lista.append('<li>' + doWyswietlenia + '</li>');
+
+
+		}
+
+		var wszystkieWartosci = [];
+
+		var test2 = $("#abc");
+		
+		test2.submit(js_lista);
+
+		
+//chodzi nam o zasabmitowanie za pomoca samego JS
+//		test2.submit(call_ajax);
+
+		var usuwacze = $(".usuwacze");
+
+		usuwacze.submit(function(e){
+			e.preventDefault();    //dzieki temu się nie submituje
+			//var costam = test2.find("input");
+			var costam = $(this).find("input");
+			var wartosci = {};
+			costam.each(function(){
+				wartosci[this.name] = $(this).val();   //do tablicy wartosci przypisze wartosc
+			});
+		
+			call_ajax(wartosci);
+		});
+
 //		console.log(test2);
 //		console.log(button2);
 		

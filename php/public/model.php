@@ -171,7 +171,12 @@
 				$stmt->execute(); 		
 				
 			} catch (\Throwable $e){ 
-				return "Nie udało się zapisać do bazy";
+				/*var_dump($e->getMessage());
+				exit;
+				return "Nie udało się zapisać do bazy";*/
+				error_log($e->getMessage());
+				return false;
+
 			}
 			return true;
 		}		
@@ -260,7 +265,8 @@
 				
 			} catch (\Throwable $e){ 
 //				return $e->getMessage();
-				return "Nie udało się usunąc";
+				error_log($e->getMessage());
+				return false;
 			}
 			return true;			
 		}
