@@ -25,7 +25,11 @@
 				echo "Nie udało się połączyć z bazą danych";
 				exit;
 			}
-			
+			/*
+//["HTTP_X_REQUESTED_WITH"]=> string(14) "XMLHttpRequest"
+			var_dump($server);
+			*/
+		//	exit;
 			$this->sciezka = $sciezka;                                       //zmienna kluczowa this odnosi sie do obiektu, dostepna tylko wtedy kiedy stworzysz obiekt
 			$this->get = $get;                                                 //tworzymy parametry obiektu
 			$this->post = $post;

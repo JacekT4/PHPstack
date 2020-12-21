@@ -54,14 +54,36 @@
 		
 			if(!empty($formularz)){
 				if(!empty($formularz["Autor"]) && !empty($formularz["Tytul"])){
-					$efektZapisania2 = $this->model->zapiszDoBazy3($formularz);
+					$r = $this->model->zapiszDoBazy3($formularz);
 				}elseif(!empty($formularz["usuwacz"])){      //elseif ŁĄCZNIE w php
 //					$usuwacz = $this->model->usunZBazy($formularz);
-					$usuwacz = $this->model->usunZBazy2($formularz);
+					$r = $this->model->usunZBazy2($formularz);
+				}elseif(!empty($formularz["wszystkie"])){
+					foreach($formularz["wszystkie"] as $i => $value){
+						$r = $this->model->zapiszDoBazy3($value);
+					}		
+				}
+
+				if($r){
+					header("Content-Type: application/json");
+					echo json_encode(["status" => "ok"]);
+					exit;
+				} else{
+					header("Content-Type: application/json");
+					echo json_encode(["status" => "gowno"]);
+					exit;
 				}
 				//do treningu z Ajaxem
+/*
 				echo '{"status":"ok"}';
-				exit;
+				exit; */
+
+
+
+			/*	array(3) { [0]=> array(2) { ["Autor"]=> string(5) "Roman" ["Tytul"]=> string(8) "Epidemia" } [1]=> array(2) { ["Autor"]=> string(5) "Jacek" ["Tytul"]=> string(20) "Jak przetrwać zimę" } [2]=> array(2) { ["Autor"]=> string(7) "Łukasz" ["Tytul"]=> string(20) "Full stack developer" } }*/
+
+
+
 
 			}	 
 			$lista2 = $this->model->odczytZBazy3($parametry);
