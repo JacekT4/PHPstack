@@ -6,7 +6,8 @@
 		private $model;
 		private $controler;
 		public function __construct(){            //tworzymy konstruktor tylko jeden dla klasy w php
-		//php zawsze stworzy te zmienne globalne w momencie wywolania przez webserwer ale złą praktyką jest dzialanie na globalnych wiec przypisujemy do lokalnych i na nich dzialamy
+		//php zawsze stworzy te zmienne globalne w momencie wywolania przez webserwer ale złą praktyką jest dzialanie na globalnych wiec przypisujemy do lokalnych i na 
+		//nich dzialamy
 			$get = $_GET;       //zmienne które dostajesz w pasku url, zawsze widoczne w url, do pobierania
 			$post = $_POST;     //zmienne które dostajesz w formularzach, nie są widoczne w adresie url, 
 			$server = $_SERVER;   //zawiera zmienne które zostały zadeklarowane przez przeglądarkę oraz twój webserwer (u nas nginx)
