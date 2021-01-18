@@ -5,6 +5,7 @@
 		private $post;
 		private $model;
 		private $controler;
+		private $sesja;
 		public function __construct(){            //tworzymy konstruktor tylko jeden dla klasy w php
 		//php zawsze stworzy te zmienne globalne w momencie wywolania przez webserwer ale złą praktyką jest dzialanie na globalnych wiec przypisujemy do lokalnych i na 
 		//nich dzialamy
@@ -31,6 +32,9 @@
 			var_dump($server);
 			*/
 		//	exit;
+			session_start();
+			$this->sesja = &$_SESSION;
+			
 			$this->sciezka = $sciezka;                                       //zmienna kluczowa this odnosi sie do obiektu, dostepna tylko wtedy kiedy stworzysz obiekt
 			$this->get = $get;                                                 //tworzymy parametry obiektu
 			$this->post = $post;
@@ -40,7 +44,13 @@
 		}
 		
 		//ROUTER taka profesjonalna nazwa funkcji poniżej
-		public function start(){                   //kazda funkcja musi miec unikalne imie      
+		public function start(){                   //kazda funkcja musi miec unikalne imie  
+
+			if (empty($this->sesja['email']) && in_array($this->sciezka, ["/studia/dodaj", "/studia/edytuj", "/studia/usun"])) {
+				header("Location: /studia/logowanie");
+				exit;
+			}
+			
 			switch($this->sciezka){
 				case "/":
 				return $this->controler->stronaDomowa();    //jest return wiec nie trzeba break
@@ -56,6 +66,18 @@
 				return $this->controler->ksiazki($this->post);
 				case "/baza":
 				return $this->controler->baza($this->get, $this->post);
+				case "/studia/dodaj":
+				return $this->controler->studiaDodaj($this->get, $this->post);
+				case "/studia/pokaz":
+				return $this->controler->studiaPokaz($this->get, $this->post);
+				case "/studia/edytuj":
+				return $this->controler->studiaEdytuj($this->get, $this->post);
+				case "/studia/usun":
+				return $this->controler->studiaUsun($this->get, $this->post);
+				case "/studia/logowanie":
+				return $this->controler->studiaLogowanie($this->get, $this->post, $this->sesja);
+				case "/studia/wylogowanie":
+				return $this->controler->studiaWylogowanie($this->get, $this->post);
 			}
 		}
 	}
