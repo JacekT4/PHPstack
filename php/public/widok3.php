@@ -57,7 +57,7 @@
 	<script>
 /*		var test1 = document.getElementById("abc");
 		var button1 = test1.getElementsByTagName("button");
-		button1[0].addEventListener("click", function(){alert("dupa")});
+		button1[0].addEventListener("click", function(){alert("czesc")});
 		console.log(test1);
 		console.log(button1);
 	*/	
@@ -65,7 +65,7 @@
 //		var button2 = test2.find("button");
 /*		var button2 = $("#abc button");     //selektor , łapie w abc wszystkie buttony
 		button2.click(function(){
-			alert("dupa");
+			alert("czesc");
 		});
 */
 		var call_ajax = function call_ajax(wartosci){
