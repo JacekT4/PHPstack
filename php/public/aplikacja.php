@@ -53,7 +53,7 @@
 			
 			switch($this->sciezka){
 				case "/":
-				return $this->controler->stronaDomowa();    //jest return wiec nie trzeba break
+				return $this->controler->stronaDomowa();    //jest return wiec nie trzeba uzywac break
 				case "/kalendarz":
 				return $this->controler->kalendarz();
 				case "/dzialanie":
@@ -69,7 +69,7 @@
 				case "/studia/dodaj":
 				return $this->controler->studiaDodaj($this->get, $this->post);
 				case "/studia/pokaz":
-				return $this->controler->studiaPokaz($this->get, $this->post);
+				return $this->controler->studiaPokaz($this->get, $this->post, !empty($this->sesja['email']));
 				case "/studia/edytuj":
 				return $this->controler->studiaEdytuj($this->get, $this->post);
 				case "/studia/usun":
@@ -78,6 +78,8 @@
 				return $this->controler->studiaLogowanie($this->get, $this->post, $this->sesja);
 				case "/studia/wylogowanie":
 				return $this->controler->studiaWylogowanie($this->get, $this->post);
+				case "/studia/rejestracja":
+				return $this->controler->studiaRejestracja($this->get, $this->post);
 			}
 		}
 	}

@@ -298,7 +298,7 @@
 				}
 			} catch (\Throwable $e){     //    \Throwable -  obiekt który służy do łapania wszystkiego co nie spełnia bloku try, czyli wszystko co się zesra , \łapie nawet jak by było name space
 //				var_dump($e->getMessage());
-				return [];      //zwróci pustą tablicę, a throw wyżyuca i zawsze musi byc obiekt który jest exeptionem
+				return [];      //zwróci pustą tablicę, a throw wyrzuca i zawsze musi byc obiekt który jest exeptionem
 			}
 			return $result;
 		}
@@ -366,6 +366,130 @@
 			return true;			
 		}
 		
+
+
+
+
+
+
+
+
+
+		public function odczytBazaMysql2($get){
+
+			try{
+				$result = [];      
+
+				if(isset($get["sortuj"]) && $get["sortuj"] == "Imie"){
+					$stmt = $this->dbh->prepare("SELECT * FROM tabela_pierwsza ORDER BY Imie" ); 
+				} elseif(isset($get["sortuj"]) && $get["sortuj"] == "Nazwisko"){ 
+					$stmt = $this->dbh->prepare("SELECT * FROM tabela_pierwsza ORDER BY Nazwisko" ); 
+				} elseif(isset($get["ID"]) && is_numeric($get["ID"])){         //jezeli jest podany ID to wyswietl tylko ta linijke z tym ID
+					$stmt = $this->dbh->prepare("SELECT * FROM tabela_pierwsza WHERE ID= :Id" );
+					$stmt->bindParam(':Id', $get["ID"]); 
+				} else {
+					$stmt = $this->dbh->prepare("SELECT * FROM tabela_pierwsza");					
+				}
+				
+				if ($stmt->execute()) {
+				  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$result[] = $row;
+				  }
+				}
+			} catch (\Throwable $e){  
+				return []; 
+			}
+			return $result;
+		}
+
+
+
+		public function zapiszBazaMysql2($post, $id = 0){
+
+			try{
+				if($id > 0 ){
+					$stmt = $this->dbh->prepare("UPDATE tabela_pierwsza SET
+							 Imie = :Imie, Nazwisko = :Nazwisko , Wiek = :Wiek, Kod_Pocztowy = :Kod_Pocztowy, Miasto = :Miasto WHERE ID = :Id" ); 
+					$stmt->bindParam(':Id', $id);
+				} else {
+					$stmt = $this->dbh->prepare("INSERT INTO tabela_pierwsza (Imie, Nazwisko, Wiek, Kod_Pocztowy, Miasto) 
+							VALUES ( :Imie, :Nazwisko, :Wiek, :Kod_Pocztowy, :Miasto)" ); 
+				}
+
+				$stmt->bindParam(':Imie', $post["Imie"]);
+				$stmt->bindParam(':Nazwisko', $post["Nazwisko"]);
+				$stmt->bindParam(':Wiek', $post["Wiek"]);
+				$stmt->bindParam(':Kod_Pocztowy', $post["Kod_Pocztowy"]);
+				$stmt->bindParam(':Miasto', $post["Miasto"]);
+				$stmt->execute();   //poprostu wykona
+		
+			} catch (\Throwable $e){    
+				return "NIE udało się zapisać do bazy";
+			}
+			return true;
+		}	
+
+
+
+		public function usunBazaMysql2($post){
+
+			try{
+
+				$stmt = $this->dbh->prepare("DELETE FROM tabela_pierwsza WHERE ID= :Id" );  
+				$stmt->bindParam(':Id', $post["usuwacz"]);
+				$stmt->execute();  
+
+			} catch (\Throwable $e){    
+				return "Nie udało się usunąc";
+			}
+			return true;			
+		}
+
+
+
+
+
+
+		public function zapiszBazaMysql3($post){
+
+			try{
+
+				$stmt = $this->dbh->prepare("INSERT INTO tabela_uzytkownikow (Email, Haslo) VALUES ( :Email, :Haslo)" ); 
+				//echo "Rejestracja udana.";
+
+
+				$stmt->bindParam(':Email', $post["Email"]);
+				$stmt->bindParam(':Haslo', $post["Haslo"]);
+				$stmt->execute();   //poprostu wykona
+		
+			} catch (\Throwable $e){    
+				return "NIE udało się zapisać do bazy";
+			}
+			return true;
+		}
+
+
+
+		public function odczytPoEmailu($email){
+
+			$result = [];
+
+			try{
+
+				$stmt = $this->dbh->prepare("SELECT * FROM tabela_uzytkownikow WHERE Email= :Email" );
+				$stmt->bindParam(':Email', $email); 
+
+				if ($stmt->execute()) {
+					while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$result[] = $row;
+					}
+				}
+			} catch (\Throwable $e){  
+				return []; 
+			}
+			return $result;
+		}
+
 	}
 	
 	
