@@ -9,6 +9,8 @@ services:
             - "80:80"
         depends_on:
             - php
+        volumes:
+            - ./nginx/public:/var/www/html/public
 
     php:
         build:
