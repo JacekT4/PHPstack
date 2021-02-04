@@ -253,6 +253,7 @@ class Controler{
 
 
 	
+	
 	public function studiaRejestracja($get, $post){
 
 		$wynik_zapisu2 = "";
