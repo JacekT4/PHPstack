@@ -1,8 +1,8 @@
 <?php
 class Controler{
 	private $model;
-	public function __construct($model){            //tworzymy konstruktor tylko jeden dla klasy w php
-		$this->model = $model;                                       //zmienna kluczowa this odnosi sie do obiektu, dostepna tylko wetdy kiedy stworzysz obiekt
+	public function __construct($model){
+		$this->model = $model;
 	}
 	
 	public function kalendarz(){
@@ -12,12 +12,12 @@ class Controler{
 		include("widok.php");
 	}
 	
-	public function dzialanie($parametry){           //!empty - jezeli nie jest pusty
+	public function dzialanie($parametry){
 		if(isset($parametry["dodaj"]) && is_numeric($parametry["dodaj"])){
 			echo "wynik: " . $this->model->dodaj($parametry["dodaj"]);
-		} elseif(isset($parametry["odejmij"])){   //w php nie ma spacji
+		} elseif(isset($parametry["odejmij"])){
 			echo "wynik: " .  $this->model->odejmij($parametry["odejmij"]);
-		} elseif(isset($parametry["pomnoz"])){                                                        //isset funkcja która sprawdza czy dana zmienna istnieje niezależnie, czy jest zmienną czy kluczem tablicy
+		} elseif(isset($parametry["pomnoz"])){
 			echo "wynik: " .  $this->model->pomnoz($parametry["pomnoz"]);
 		} elseif(!empty($parametry["podziel"])){
 			echo "wynik: " .  $this->model->podziel($parametry["podziel"]);
@@ -34,14 +34,12 @@ class Controler{
 	public function emaile($formularz){
 		
 		if(!empty($formularz)){
-//				var_dump($formularz);     //ZAD dodać imię, nazwiko i email jako blok do bazy danych
 
 			$efektZapisania = $this->model->zapiszDoBazy2($formularz);
 
 		} 
 		$lista = $this->model->odczytZBazy2();
 		
-			//ZAD zrobic zmienna lista ktora bedzie zawierala email, imie i nazwisko i wyrenderowac na podstawie tej zmiennej
 		include("widoklisty.php");
 	}
 	
@@ -51,8 +49,7 @@ class Controler{
 		if(!empty($formularz)){
 			if(!empty($formularz["Autor"]) && !empty($formularz["Tytul"])){
 				$r = $this->model->zapiszDoBazy3($formularz);
-			}elseif(!empty($formularz["usuwacz"])){      //elseif ŁĄCZNIE w php
-//					$usuwacz = $this->model->usunZBazy($formularz);
+			}elseif(!empty($formularz["usuwacz"])){
 				$r = $this->model->usunZBazy2($formularz);
 			}elseif(!empty($formularz["wszystkie"])){
 				foreach($formularz["wszystkie"] as $i => $value){
@@ -69,19 +66,8 @@ class Controler{
 				echo json_encode(["status" => "gowno"]);
 				exit;
 			}
-			//do treningu z Ajaxem
-/*
-			echo '{"status":"ok"}';
-			exit; */
+		}
 
-
-
-		/*	array(3) { [0]=> array(2) { ["Autor"]=> string(5) "Roman" ["Tytul"]=> string(8) "Epidemia" } [1]=> array(2) { ["Autor"]=> string(5) "Jacek" ["Tytul"]=> string(20) "Jak przetrwać zimę" } [2]=> array(2) { ["Autor"]=> string(7) "Łukasz" ["Tytul"]=> string(20) "Full stack developer" } }*/
-
-
-
-
-		}	 
 		$lista2 = $this->model->odczytZBazy3($parametry);
 			
 		include("widok3.php");
@@ -89,18 +75,9 @@ class Controler{
 	
 	
 	
-	public function baza($parametry, $formularz){    //bo do get i do post
-		$wynik_zapisu = true;
+	public function baza($parametry, $formularz){
 		$wynik_usuwania = true;
-/*			$formularz = [
-			"Imie"=> "Pawel",
-			"Nazwisko"=>"Nowak",
-			"Wiek"=>"28",
-			"Kod_Pocztowy"=>"20-456",
-			"Miasto"=>"Lublin"];							*/
-/*			var_dump($parametry);
-		exit;
-*/
+
 		if(!empty($formularz)){
 			if(!empty($formularz["Imie"]) && !empty($formularz["Nazwisko"]) && !empty($formularz["Wiek"]) && !empty($formularz["Kod_Pocztowy"]) 
 			&& !empty($formularz["Miasto"])){
@@ -110,14 +87,16 @@ class Controler{
 			}
 		}
 		$wyniki = $this->model->odczytBazaMysql($parametry);
-
-/*			echo "<pre>";
-		var_dump ($wyniki);
-		exit;									*/
 		
 		include("widok4.php");		
 	}
 
+
+
+
+
+
+	
 
 	public function stronaDomowa(){
 		$this->renderuj("stronaDomowa.php");
@@ -129,11 +108,11 @@ class Controler{
 
 		if(!empty($post)){
 			$args = array(
-				'Imie'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']], //user_name z netBeansa
-				'Nazwisko'    => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_-]{2,25}$/']],  //user_name z netBeansa
+				'Imie'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']],
+				'Nazwisko'    => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_-]{2,25}$/']],
 				'Wiek'     => FILTER_VALIDATE_INT,
-				'Kod_Pocztowy' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_-]{2,25}$/']], //user_name z netBeansa
-				'Miasto'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_-]{2,25}$/']] //user_name z netBeansa	
+				'Kod_Pocztowy' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_-]{2,25}$/']],
+				'Miasto'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_-]{2,25}$/']]
 			);
 			
 			$post = filter_var_array($post, $args);
@@ -169,7 +148,7 @@ class Controler{
 	public function studiaEdytuj($get, $post){
 
 		$wyniki2 = $this->model->odczytBazaMysql2($get);
-		if(empty($wyniki2[0]["ID"])){     //jesli ten rekord nie istnieje to nie mozna na nim pracowac
+		if(empty($wyniki2[0]["ID"])){  
 			header("Location: /studia/pokaz");
 			exit;
 		}
@@ -178,11 +157,11 @@ class Controler{
 		
 		if(!empty($post)){
 			$args = array(
-				'Imie'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']], //user_name z netBeansa
-				'Nazwisko'    => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']],  //user_name z netBeansa
+				'Imie'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']], 
+				'Nazwisko'    => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']],
 				'Wiek'     => FILTER_VALIDATE_INT,
-				'Kod_Pocztowy' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']], //user_name z netBeansa
-				'Miasto'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']] //user_name z netBeansa	
+				'Kod_Pocztowy' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']],
+				'Miasto'   => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^[0-9A-Za-ząĄęĘłŁńŃśŚćĆźŹżŻóÓ_ -]{2,25}$/']] 
 			);
 			
 			$post = filter_var_array($post, $args);
@@ -228,20 +207,12 @@ class Controler{
 
 	public function studiaLogowanie($get, $post, &$sesja){
 
-		//Przerob  to na korzystanie z bazy danych (w modelu ma sie laczyc)
-	/*	if (!empty($post['email']) && $post['email'] === 'a@b' && !empty($post['password']) && $post['password'] === 'test1') {
-			$sesja['email'] = 'a@b';
-			header("Location: /studia/dodaj");
-			exit;
-		}
-	*/
-		//$this->haslo = password_hash($haslo, PASSWORD_DEFAULT);
 		$error = "";
 
 		if(!empty($post)){
-			$args = array(  //CZY TE nazwy musza byc takie same jak w modelu?
-				'Email'   => FILTER_VALIDATE_EMAIL, //user_name z netBeansa
-				'Haslo'    => FILTER_SANITIZE_MAGIC_QUOTES //lub FILTER_SANITIZE_FULL_SPECIAL_CHARS
+			$args = array(
+				'Email'   => FILTER_VALIDATE_EMAIL,
+				'Haslo'    => FILTER_SANITIZE_MAGIC_QUOTES
 			);
 			$post = filter_var_array($post, $args);
 		}
@@ -287,9 +258,9 @@ class Controler{
 		$wynik_zapisu2 = "";
 	
 		if(!empty($post)){
-			$args = array(  //CZY TE nazwy musza byc takie same jak w modelu?
-				'Email'   => FILTER_VALIDATE_EMAIL, //user_name z netBeansa
-				'Haslo'    => FILTER_SANITIZE_MAGIC_QUOTES //lub FILTER_SANITIZE_FULL_SPECIAL_CHARS
+			$args = array( 
+				'Email'   => FILTER_VALIDATE_EMAIL,
+				'Haslo'    => FILTER_SANITIZE_MAGIC_QUOTES
 			);
 			
 			$post = filter_var_array($post, $args);
@@ -315,4 +286,3 @@ class Controler{
 	}
 
 }
-//konstruktor używamy non stop a destruktor prawie wcale
